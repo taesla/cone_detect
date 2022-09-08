@@ -28,31 +28,32 @@ def callback(input_ros_msg):
     cloud = PointCloud2() 
     cloud.header.frame_id = "/velodyne" 
 
-    cloud.header.stamp = input_ros_msg.header.stamp
+    cloud.header = input_ros_msg.header
 
     cloud = pcl_helper.ros_to_pcl(input_ros_msg)
 
     # 실행 코드 부분 
     filter_axis = 'x'
     axis_min = 0
-    axis_max = 6
+    axis_max = 20
     cloud = do_passthrough(cloud, filter_axis, axis_min, axis_max)
 
     filter_axis = 'y'
-    axis_min = -5.0 # minimum -0.55
-    axis_max = 5.0 # minimum 1.55
+    axis_min = -3 
+    axis_max = 3
     cloud = do_passthrough(cloud, filter_axis, axis_min, axis_max)
 
     #filter_axis = 'z'
-    #axis_min = -1.0
-    #axis_max = 0.5
+    #axis_min = -1.1
+    #axis_max = 1
     #cloud = do_passthrough(cloud, filter_axis, axis_min, axis_max)
 
 
     time = rospy.Time.now().to_sec()
     cloud_new = pcl_helper.pcl_to_ros(cloud) #PCL을 ROS 메시지로 변경
     cloud_new.header.stamp = input_ros_msg.header.stamp
-
+    cloud_new.fields = input_ros_msg.fields
+    cloud_new.is_dense = True
     pub.publish(cloud_new)
 
 if __name__ == "__main__":

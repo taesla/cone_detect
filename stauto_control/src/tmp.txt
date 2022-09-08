@@ -1,0 +1,11 @@
+def callback2(path_msg):
+
+    
+    for i in range(0,len(path_msg.poses)):
+        pub_msgs = Twist()
+        pub_msgs.linear.x = path_msg.poses[i].pose.position.x
+        pub_msgs.angular.z = atan2(path_msg.poses[i].pose.position.y,path_msg.poses[i].pose.position.x)
+        center_line.publish(pub_msgs)
+        if (cone_circle <= 3):
+            rospy.sleep()
+            

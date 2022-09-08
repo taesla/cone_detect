@@ -38,7 +38,6 @@ add_definitions(${PCL_DEFINITIONS})
 add_executable(groundplanfit 
 	nodes/ground_filter/groundplanfit.cpp
 )
-
 target_include_directories(groundplanfit PRIVATE
 	${PCL_INCLUDE_DIRS}
 )

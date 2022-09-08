@@ -6,6 +6,8 @@ import math
 from nav_msgs.msg import Path
 from std_msgs.msg import Float32
 from darknet_ros_msgs.msg import BoundingBoxes
+from sensor_msgs.msg import PointCloud2
+import sensor_msgs.point_cloud2 as pc2
 
 from ackermann_msgs.msg import AckermannDriveStamped
 # paramters
@@ -95,12 +97,13 @@ def by_callback(msg):
 	global blue, yellow
 	blue = 0
 	yellow = 0
-	for i in range(len(msg.bounding_boxes)):
-		if msg.bounding_boxes[i].Class == 'blue':
-			blue = 1
-		if msg.bounding_boxes[i].Class == 'yellow':
+
+	for p in pc2.read_points(msg , field_names = ('rgb'),skip_nans = True):
+		if p[0] == 4294967040 :
 			yellow = 1
-	print(blue,yellow)
+		if p[0] == 4278190335  :
+			blue = 1
+	print(yellow , blue)
 
 def callback(msg):
 	map_x = []
@@ -122,7 +125,7 @@ def callback(msg):
 
 if __name__ == '__main__':
 	rospy.init_node('stanley_control')
-	rospy.Subscriber('/darknet_ros/bounding_boxes',BoundingBoxes,by_callback)
+	rospy.Subscriber('/sorted_points2',PointCloud2,by_callback)
 	rospy.Subscriber('/waypoints',Path,callback)
 	pub = rospy.Publisher('/steer',Float32,queue_size=1)
 	rospy.spin()
